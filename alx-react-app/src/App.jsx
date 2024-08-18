@@ -12,7 +12,7 @@ function App() {
       <div className="App">
           <Header />
           <MainContent />
-          <UserProfile name="Warith" age="26" bio="Loves hiking and photography" />
+          <UserProfile name="Alice" age="25" bio="Loves hiking and photography" />
           <Footer />
       </div>
   );
