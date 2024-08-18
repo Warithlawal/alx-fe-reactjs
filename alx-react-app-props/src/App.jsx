@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from 'react';
-import ProfilePage from './ProfilePage';
+import ProfilePage from '.components/ProfilePage';
 import { UserProvider } from './components/UserContext';
 
 function App() {
