@@ -1,4 +1,4 @@
-// src/recipeStore.js
+// src/components/recipeStore.js
 import create from 'zustand';
 
 const useRecipeStore = create((set) => ({
@@ -6,42 +6,51 @@ const useRecipeStore = create((set) => ({
   favorites: [],
   searchTerm: '',
   filteredRecipes: [],
-  recommendations: [],
-
-  // Action to add a new recipe to the store
+  
+  // Action to add a new recipe
   addRecipe: (newRecipe) => set((state) => ({
     recipes: [...state.recipes, newRecipe],
   })),
 
-  // Action to remove a recipe from the favorites
-  removeFavorite: (recipeId) => set((state) => ({
-    favorites: state.favorites.filter((id) => id !== recipeId),
+  // Action to update an existing recipe
+  updateRecipe: (updatedRecipe) => set((state) => ({
+    recipes: state.recipes.map((recipe) =>
+      recipe.id === updatedRecipe.id ? updatedRecipe : recipe
+    ),
   })),
 
-  // Action to add a recipe to the favorites
-  addFavorite: (recipeId) => set((state) => ({
-    favorites: [...state.favorites, recipeId],
+  // Action to delete a recipe
+  deleteRecipe: (recipeId) => set((state) => ({
+    recipes: state.recipes.filter((recipe) => recipe.id !== recipeId),
   })),
 
-  // Action to update the search term and filter the recipes
+  // Action to set the search term
   setSearchTerm: (term) => set({ searchTerm: term }),
+
+  // Action to filter recipes based on the search term
   filterRecipes: () => set((state) => ({
     filteredRecipes: state.recipes.filter((recipe) =>
       recipe.title.toLowerCase().includes(state.searchTerm.toLowerCase())
     ),
   })),
 
-  // Action to generate recommendations based on favorites
+  // Action to add a recipe to favorites
+  addFavorite: (recipeId) => set((state) => ({
+    favorites: [...state.favorites, recipeId],
+  })),
+
+  // Action to remove a recipe from favorites
+  removeFavorite: (recipeId) => set((state) => ({
+    favorites: state.favorites.filter((id) => id !== recipeId),
+  })),
+
+  // Action to generate recommendations based on favorites (optional)
   generateRecommendations: () => set((state) => {
-    const recommended = state.recipes.filter(
-      (recipe) =>
-        state.favorites.includes(recipe.id) && Math.random() > 0.5
+    const recommended = state.recipes.filter((recipe) =>
+      state.favorites.includes(recipe.id) && Math.random() > 0.5
     );
     return { recommendations: recommended };
   }),
-
-  // Action to set the initial list of recipes
-  setRecipes: (recipes) => set({ recipes }),
 }));
 
-export { useRecipeStore };
+export default useRecipeStore;
