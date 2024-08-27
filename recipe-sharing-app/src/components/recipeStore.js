@@ -1,5 +1,5 @@
 // src/components/recipeStore.js
-import create from 'zustand';
+import {create} from 'zustand';
 
 const useRecipeStore = create((set) => ({
   recipes: [],          // State to hold the list of recipes
