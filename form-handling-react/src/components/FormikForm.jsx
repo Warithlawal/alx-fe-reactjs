@@ -12,8 +12,7 @@ const FormikForm = () => {
 
   // Handle form submission
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    // Simulate an API call
-    console.log(values);
+    console.log(values); // Simulate an API call
     setSubmitting(false);
     resetForm();
   };
