@@ -1,68 +1,41 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import TodoList from '../components/TodoList';
 
-function TodoList() {
-  const [todos, setTodos] = useState([
-    { id: 1, text: 'Learn React', completed: false },
-    { id: 2, text: 'Learn Jest', completed: false },
-  ]);
+describe('TodoList Component', () => {
+  test('renders the initial todos', () => {
+    render(<TodoList />);
+    const todoItems = screen.getAllByRole('listitem');
+    expect(todoItems).toHaveLength(3); // Assuming initial state has 3 todos
+  });
 
-  const addTodo = (text) => {
-    setTodos([...todos, { id: Date.now(), text, completed: false }]);
-  };
+  test('adds a new todo', () => {
+    render(<TodoList />);
+    const input = screen.getByPlaceholderText(/Add a new todo/i);
+    const addButton = screen.getByText(/Add Todo/i);
 
-  const toggleTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  };
+    fireEvent.change(input, { target: { value: 'New Todo' } });
+    fireEvent.click(addButton);
 
-  const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-  };
+    const todoItems = screen.getAllByRole('listitem');
+    expect(todoItems).toHaveLength(4); // 3 initial todos + 1 new todo
+    expect(screen.getByText(/New Todo/i)).toBeInTheDocument();
+  });
 
-  return (
-    <div>
-      <h1>Todo List</h1>
-      <ul>
-        {todos.map((todo) => (
-          <li
-            key={todo.id}
-            style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
-            onClick={() => toggleTodo(todo.id)}
-          >
-            {todo.text}
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-      <AddTodoForm addTodo={addTodo} />
-    </div>
-  );
-}
+  test('toggles todo completion', () => {
+    render(<TodoList />);
+    const firstTodo = screen.getByText(/First Todo/i);
+    fireEvent.click(firstTodo);
 
-function AddTodoForm({ addTodo }) {
-  const [text, setText] = useState('');
+    expect(firstTodo).toHaveClass('completed'); // Assuming a 'completed' class is added on toggle
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (text) {
-      addTodo(text);
-      setText('');
-    }
-  };
+  test('deletes a todo', () => {
+    render(<TodoList />);
+    const deleteButtons = screen.getAllByText(/Delete/i);
+    fireEvent.click(deleteButtons[0]); // Click on the first delete button
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <button type="submit">Add Todo</button>
-    </form>
-  );
-}
-
-export default TodoList;
+    const todoItems = screen.getAllByRole('listitem');
+    expect(todoItems).toHaveLength(2); // One less than initial state
+  });
+});
