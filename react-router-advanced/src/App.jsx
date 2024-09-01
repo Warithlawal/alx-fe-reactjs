@@ -16,6 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/profile/*" element={<ProtectedRoute element={<Profile />} />} />
         <Route path="/user/:userId" element={<UserProfile />} />
+        <Route path="/blog/:id" element={<BlogPost />} />
       </Routes>
     </Router>
   );
