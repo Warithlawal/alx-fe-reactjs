@@ -7,8 +7,8 @@ const Search = ({ onSearch }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (username.trim()) {
-      onSearch(username);  // Trigger search in parent component
-      setUsername('');  // Clear input after submission
+      onSearch(username); // Call the parent function to perform the search
+      setUsername(''); // Clear the input after submitting
     }
   };
 
