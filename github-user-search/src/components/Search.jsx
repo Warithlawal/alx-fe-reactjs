@@ -12,12 +12,12 @@ const Search = () => {
     setLoading(true);
     setError(null);
     setUserData(null);
-    
+
     try {
       const response = await axios.get(`https://api.github.com/users/${username}`);
       setUserData(response.data);  // Store user data in state
     } catch (error) {
-      setError('Looks like we can’t find the user');
+      setError('Looks like we can’t find the user'); // Set error message when user is not found
     } finally {
       setLoading(false);
     }
@@ -26,7 +26,7 @@ const Search = () => {
   return (
     <div className="search-container p-4">
       <h1 className="text-2xl mb-4">GitHub User Search</h1>
-      
+
       {/* Form to enter GitHub username */}
       <form onSubmit={handleSearch} className="mb-4">
         <input
@@ -45,7 +45,7 @@ const Search = () => {
       {loading && <p>Loading...</p>}
 
       {/* Display error message */}
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}  {/* Shows "Looks like we can’t find the user" */}
 
       {/* Display user info if available */}
       {userData && (
