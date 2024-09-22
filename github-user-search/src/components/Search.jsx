@@ -5,10 +5,10 @@ const Search = ({ onSearch }) => {
   const [location, setLocation] = useState('');
   const [repos, setRepos] = useState('');
 
-  // Form submit handler
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Invoke the onSearch function, passing the search parameters
+    // Pass user input to the parent component for searching
     await onSearch({ username, location, repos });
   };
 
