@@ -9,16 +9,16 @@ const App = () => {
 
   // Fetch GitHub user data based on username
   const handleSearch = async (username) => {
-    setLoading(true);  // Start loading
-    setError(null);    // Clear previous errors
+    setLoading(true);
+    setError(null);
     try {
       const response = await axios.get(`https://api.github.com/users/${username}`);
-      setUser(response.data);  // Store user data
+      setUser(response.data);  // Store user data in state
     } catch (error) {
-      setError('Looks like we can’t find the user');  // Set error message
-      setUser(null);  // Clear user data if there's an error
+      setError('Looks like we can’t find the user');
+      setUser(null);
     } finally {
-      setLoading(false);  // Stop loading
+      setLoading(false);
     }
   };
 
