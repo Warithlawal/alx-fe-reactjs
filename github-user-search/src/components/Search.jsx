@@ -2,31 +2,39 @@ import React, { useState } from 'react';
 
 const Search = ({ onSearch }) => {
   const [username, setUsername] = useState('');
+  const [location, setLocation] = useState('');
+  const [repos, setRepos] = useState('');
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (username.trim()) {
-      onSearch(username); // Call the parent function to perform the search
-      setUsername(''); // Clear the input after submitting
-    }
+    onSearch({ username, location, repos });
   };
 
   return (
-    <div className="search-container p-4">
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter GitHub username"
-          className="border p-2 rounded w-full"
-        />
-        <button type="submit" className="mt-2 bg-blue-500 text-white p-2 rounded">
-          Search
-        </button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        className="border p-2"
+      />
+      <input
+        type="text"
+        placeholder="Location"
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+        className="border p-2"
+      />
+      <input
+        type="number"
+        placeholder="Minimum Repositories"
+        value={repos}
+        onChange={(e) => setRepos(e.target.value)}
+        className="border p-2"
+      />
+      <button type="submit" className="bg-blue-500 text-white p-2 rounded">Search</button>
+    </form>
   );
 };
 
