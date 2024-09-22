@@ -30,4 +30,8 @@ const HomePage = () => {
   );
 };
 
+<Link to="/add-recipe" className="text-blue-500 hover:underline">
+  Add a New Recipe
+</Link>
+
 export default HomePage;
