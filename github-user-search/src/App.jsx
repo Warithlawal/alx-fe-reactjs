@@ -1,39 +1,44 @@
 import React, { useState } from 'react';
-import Search from './components/Search';
 import axios from 'axios';
+import Search from './components/Search';
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);  // Stores user data
+  const [loading, setLoading] = useState(false);  // Loading state
+  const [error, setError] = useState(null);  // Error state
 
-  // Function to handle search and API call
+  // Fetch GitHub user data based on username
   const handleSearch = async (username) => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(`https://api.github.com/users/${username}`);
-      setUser(response.data);  // Update user state with fetched data
+      setUser(response.data);  // Store user data in state
     } catch (error) {
       setError('Looks like we can’t find the user');
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="App p-4">
+    <div className="app-container p-4">
       <h1 className="text-2xl mb-4">GitHub User Search</h1>
 
-      {/* Search component for input */}
+      {/* Render Search component, pass handleSearch as prop */}
       <Search onSearch={handleSearch} />
 
-      {/* Conditional rendering for loading, error, and user display */}
+      {/* Conditional rendering based on loading, error, and user states */}
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {user && (
-        <div className="user-profile p-4 border rounded shadow-lg mt-4">
-          <img src={user.avatar_url} alt={user.login} className="w-24 h-24 rounded-full" />
+        <div className="user-info p-4 border rounded shadow-lg mt-4">
+          <img
+            src={user.avatar_url}
+            alt={user.login}
+            className="w-24 h-24 rounded-full"
+          />
           <h2 className="text-xl mt-4">{user.login}</h2>
           <a
             href={user.html_url}
