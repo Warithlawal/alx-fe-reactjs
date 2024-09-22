@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 const Search = ({ onSearch }) => {
   const [username, setUsername] = useState('');
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     if (username.trim()) {
-      onSearch(username);  // Pass the username to the parent component
-      setUsername('');  // Clear the input after submission
+      onSearch(username);  // Send the username to parent component
+      setUsername('');  // Clear input after submission
     }
   };
 
