@@ -11,7 +11,7 @@ export const fetchUserData = async (query, location = '', minRepos = 0) => {
       searchQuery += ` location:${location}`;
     }
 
-    const response = await axios.get('https://api.github.com/search/users', {
+    const response = await axios.get('https://api.github.com/search/users?q', {
       params: {
         q: searchQuery,
         per_page: 10, // Set the number of results per page
