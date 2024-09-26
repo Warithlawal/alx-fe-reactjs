@@ -1,67 +1,58 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
-const Search = ({ onSearch }) => {
-  const [query, setQuery] = useState('');
-  const [user, setUser] = useState(null);  // Stores user data
-  const [loading, setLoading] = useState(false);  // Loading state
-  const [error, setError] = useState(null);  // Error state
+const Search = () => {
+  const [searchInput, setSearchInput] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false); // Add an error state
 
-  // Handle the search input and fetch GitHub user data
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    
+    setError(false); // Reset error before the search
+
     try {
-      const response = await axios.get(`https://api.github.com/users/${query}`);
-      setUser(response.data);
+      // Make your API call here to fetch user data
+      const response = await fetch(`https://api.github.com/search/users?q=${searchInput}`);
+      const data = await response.json();
+      
+      if (data.items.length === 0) {
+        setError(true); // If no users found, set error to true
+      } else {
+        setSearchResults(data.items);
+      }
     } catch (err) {
-      setError("Looks like we can't find the user");  // Set error message
-      setUser(null);
+      setError(true); // Set error if there is a failure
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="search-container">
-      <form onSubmit={handleSearch} className="mb-4">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter GitHub username"
-          className="border p-2"
+    <div>
+      <form onSubmit={handleSearch}>
+        <input 
+          type="text" 
+          placeholder="Search GitHub user..." 
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          required 
         />
-        <button type="submit" className="bg-blue-500 text-white p-2">Search</button>
+        <button type="submit">Search</button>
       </form>
 
-      {/* Display loading state */}
       {loading && <p>Loading...</p>}
 
-      {/* Display error message */}
-      {error && <p className="text-red-500">{error}</p>}
-
-      {/* Display user information */}
-      {user && (
-        <div className="user-info p-4 border rounded shadow-lg">
-          <img
-            src={user.avatar_url}
-            alt={user.login}
-            className="w-24 h-24 rounded-full"
-          />
-          <h2 className="text-xl mt-4">{user.login}</h2>
-          <a
-            href={user.html_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500"
-          >
-            View GitHub Profile
-          </a>
-        </div>
-      )}
+      {error && <p>Looks like we can't find the user</p>}  {/* Display error message */}
+      
+      <ul>
+        {searchResults.map(user => (
+          <li key={user.id}>
+            <img src={user.avatar_url} alt={user.login} />
+            <p>{user.login}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
