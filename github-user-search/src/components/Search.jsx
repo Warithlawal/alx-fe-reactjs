@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { fetchUserData } from '../api/githubAPI'; // Assuming fetchUserData is imported from an API file
 
-const Search = ({ onSearch }) => {
+const Search = () => {
   const [query, setQuery] = useState('');
-  const [user, setUser] = useState(null);  // Stores user data
-  const [loading, setLoading] = useState(false);  // Loading state
-  const [error, setError] = useState(null);  // Error state
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Handle the search input and fetch GitHub user data
-  const handleSearch = async (e) => {
+  // Handle form submission to trigger fetchUserData
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    if (query.trim() === '') return; // Prevent search if query is empty
     
+    setLoading(true);
+    setError('');
+    setUsers([]);
+
     try {
-      const response = await axios.get(`https://api.github.com/users/${query}`);
-      setUser(response.data);
+      const data = await fetchUserData(query); // Use fetchUserData to get data from API
+      setUsers(data.items); // Assuming data.items is the list of users
     } catch (err) {
-      setError("Looks like we cant find the user");  // Set error message
-      setUser(null);
+      setError("Looks like we cant find the user");
     } finally {
       setLoading(false);
     }
@@ -26,40 +28,42 @@ const Search = ({ onSearch }) => {
 
   return (
     <div className="search-container">
-      <form onSubmit={handleSearch} className="mb-4">
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
+          placeholder="Search for GitHub users"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter GitHub username"
-          className="border p-2"
+          className="input-box"
         />
-        <button type="submit" className="bg-blue-500 text-white p-2">Search</button>
+        <button type="submit" className="search-button">
+          Search
+        </button>
       </form>
 
-      {/* Display loading state */}
+      {/* Conditional Rendering for Loading, Error, or Results */}
       {loading && <p>Loading...</p>}
-
-      {/* Display error message */}
-      {error && <p className="text-red-500">{error}</p>}
-
-      {/* Display user information */}
-      {user && (
-        <div className="user-info p-4 border rounded shadow-lg">
-          <img
-            src={user.avatar_url}
-            alt={user.login}
-            className="w-24 h-24 rounded-full"
-          />
-          <h2 className="text-xl mt-4">{user.login}</h2>
-          <a
-            href={user.html_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500"
-          >
-            View GitHub Profile
-          </a>
+      {error && <p>{error}</p>}
+      {users.length > 0 && !loading && !error && (
+        <div className="results-container">
+          {users.map((user) => (
+            <div key={user.id} className="user-card">
+              <img
+                src={user.avatar_url}
+                alt={user.login}
+                className="avatar"
+              />
+              <h2>{user.login}</h2>
+              <a
+                href={user.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="profile-link"
+              >
+                View Profile
+              </a>
+            </div>
+          ))}
         </div>
       )}
     </div>
