@@ -3,12 +3,13 @@ import { fetchUserData } from '../services/githubService'; // Updated path
 
 const Search = () => {
   const [query, setQuery] = useState('');
-  const [minRepos, setMinRepos] = useState(0); // Add state for minRepos
+  const [location, setLocation] = useState(''); // State for location input
+  const [minRepos, setMinRepos] = useState(0); // State for minimum repos input
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Handle form submission to trigger fetchUserData
+  // Handle form submission to fetch user data
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (query.trim() === '') return;
@@ -18,8 +19,8 @@ const Search = () => {
     setUsers([]);
 
     try {
-      const data = await fetchUserData(query, minRepos); // Pass minRepos as parameter
-      setUsers(data.items); // Assuming data.items is the list of users
+      const data = await fetchUserData(query, location, minRepos); // Pass location and minRepos
+      setUsers(data.items); // Set user data from the API response
     } catch (err) {
       setError("Looks like we can't find the user");
     } finally {
@@ -38,6 +39,13 @@ const Search = () => {
           className="input-box"
         />
         <input
+          type="text"
+          placeholder="Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="input-box"
+        />
+        <input
           type="number"
           placeholder="Min Repos"
           value={minRepos}
@@ -49,7 +57,7 @@ const Search = () => {
         </button>
       </form>
 
-      {/* Conditional Rendering for Loading, Error, or Results */}
+      {/* Conditional rendering for results */}
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       {users.length > 0 && !loading && !error && (
