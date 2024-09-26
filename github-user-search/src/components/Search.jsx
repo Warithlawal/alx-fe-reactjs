@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { fetchUserData } from '../api/githubAPI'; // Assuming fetchUserData is imported from an API file
+import { fetchUserData } from '../services/githubService'; // Updated path
 
 const Search = () => {
   const [query, setQuery] = useState('');
+  const [minRepos, setMinRepos] = useState(0); // Add state for minRepos
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -10,17 +11,17 @@ const Search = () => {
   // Handle form submission to trigger fetchUserData
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (query.trim() === '') return; // Prevent search if query is empty
-    
+    if (query.trim() === '') return;
+
     setLoading(true);
     setError('');
     setUsers([]);
 
     try {
-      const data = await fetchUserData(query); // Use fetchUserData to get data from API
+      const data = await fetchUserData(query, minRepos); // Pass minRepos as parameter
       setUsers(data.items); // Assuming data.items is the list of users
     } catch (err) {
-      setError("Looks like we cant find the user");
+      setError("Looks like we can't find the user");
     } finally {
       setLoading(false);
     }
@@ -36,6 +37,13 @@ const Search = () => {
           onChange={(e) => setQuery(e.target.value)}
           className="input-box"
         />
+        <input
+          type="number"
+          placeholder="Min Repos"
+          value={minRepos}
+          onChange={(e) => setMinRepos(e.target.value)}
+          className="input-box"
+        />
         <button type="submit" className="search-button">
           Search
         </button>
@@ -48,11 +56,7 @@ const Search = () => {
         <div className="results-container">
           {users.map((user) => (
             <div key={user.id} className="user-card">
-              <img
-                src={user.avatar_url}
-                alt={user.login}
-                className="avatar"
-              />
+              <img src={user.avatar_url} alt={user.login} className="avatar" />
               <h2>{user.login}</h2>
               <a
                 href={user.html_url}
